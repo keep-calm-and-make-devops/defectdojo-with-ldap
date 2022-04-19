@@ -64,7 +64,7 @@ jobs:
       - name: Build and push images
         uses: docker/build-push-action@v2
         env:
-          REPO_ORG: agiliway/defectdojo-with-ldap
+          REPO_ORG: agiliway
           docker-image: ${{ matrix.docker-image }}
         with:
           push: true

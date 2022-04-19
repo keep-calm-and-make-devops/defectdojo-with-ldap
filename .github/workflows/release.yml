@@ -24,6 +24,9 @@ jobs:
         with:
           clean: false
 
+      - name: Check
+        run: ls -la
+
       - name: Checkout original DefectDojo repo
         uses: actions/checkout@v3
         with:
@@ -31,6 +34,9 @@ jobs:
           ref: 'release/${{ env.VERSION }}'
           clean: false
 
+      - name: Check
+        run: ls -la
+        
       - name: Replace some files for defectdojo customization
         run: |
           mv ./customization/Dockerfile.django ./

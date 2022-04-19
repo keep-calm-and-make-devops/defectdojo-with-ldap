@@ -20,9 +20,9 @@ jobs:
     steps:
 
       - name: Checkout base repo
-        # for non PR runs we just checkout the default, which is a sha on a branch probably
-        if: github.event_name != 'pull_request' && github.event_name != 'pull_request_target'
         uses: actions/checkout@v3
+        with:
+          clean: false
 
       - name: Checkout original DefectDojo repo
         uses: actions/checkout@v3

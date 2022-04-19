@@ -29,6 +29,7 @@ jobs:
         with:
           repository: 'DefectDojo/django-DefectDojo'
           ref: 'release/${{ env.VERSION }}'
+          clean: false
 
       - name: Replace some files for defectdojo customization
         run: |

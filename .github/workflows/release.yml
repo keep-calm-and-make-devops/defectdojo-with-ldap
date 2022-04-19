@@ -25,7 +25,10 @@ jobs:
           clean: false
 
       - name: Check
-        run: ls -la
+        run: |
+          ls -la
+          rm -rf .git
+          rm -rf .github
 
       - name: Checkout original DefectDojo repo
         uses: actions/checkout@v3
@@ -37,8 +40,6 @@ jobs:
       - name: Check
         run: |
           ls -la
-          rm -rf .git
-          rm -rf .github
 
       - name: Replace some files for defectdojo customization
         run: |

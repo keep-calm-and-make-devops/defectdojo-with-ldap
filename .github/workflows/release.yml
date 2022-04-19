@@ -35,8 +35,11 @@ jobs:
           clean: false
 
       - name: Check
-        run: ls -la
-        
+        run: |
+          ls -la
+          rm -rf .git
+          rm -rf .github
+
       - name: Replace some files for defectdojo customization
         run: |
           mv ./customization/Dockerfile.django ./

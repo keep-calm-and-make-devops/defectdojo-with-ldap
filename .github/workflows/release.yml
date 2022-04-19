@@ -1,0 +1,55 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  pull_request_target:
+  push:
+
+env:
+  VERSION: "2.9.0"
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+          docker-image: [django, nginx]
+
+    steps:
+
+      - name: Checkout base repo
+        # for non PR runs we just checkout the default, which is a sha on a branch probably
+        if: github.event_name != 'pull_request' && github.event_name != 'pull_request_target'
+        uses: actions/checkout@v3
+
+      - name: Checkout original DefectDojo repo
+        uses: actions/checkout@v3
+        with:
+          repository: 'https://github.com/DefectDojo/django-DefectDojo.git'
+          ref: 'release/${{ env.VERSION }}'
+
+      - name: Replace some files for defectdojo customization
+        run: |
+          mv ./customization/Dockerfile.django ./
+          mv ./customization/Dockerfile.nginx ./
+          mv ./customization/requirements.txt ./
+          mv ./customization/settings.dist.py ./dojo/settings/
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push images
+        uses: docker/build-push-action@v2
+        env:
+          REPO_ORG: ${{ steps.set-repo-org.outputs.repoorg }}
+          docker-image: ${{ matrix.docker-image }}
+        with:
+          push: true
+          tags: ${{ env.REPO_ORG }}/defectdojo-${{ env.docker-image}}:${{ env.VERSION }}, ${{ env.REPO_ORG }}/defectdojo-${{ env.docker-image}}:latest
+          file: ./Dockerfile.${{ env.docker-image }}
+          context: .

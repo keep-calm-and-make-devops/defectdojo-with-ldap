@@ -19,17 +19,6 @@ jobs:
 
     steps:
 
-      - name: Checkout base repo
-        uses: actions/checkout@v3
-        with:
-          clean: false
-
-      - name: Check
-        run: |
-          ls -la
-          rm -rf .git
-          rm -rf .github
-
       - name: Checkout original DefectDojo repo
         uses: actions/checkout@v3
         with:
@@ -41,12 +30,22 @@ jobs:
         run: |
           ls -la
 
+      - name: Checkout base repo
+        uses: actions/checkout@v3
+        with:
+          clean: false
+          path: 'base-repo'
+
+      - name: Check
+        run: |
+          ls -la
+
       - name: Replace some files for defectdojo customization
         run: |
-          mv ./customization/Dockerfile.django ./
-          mv ./customization/Dockerfile.nginx ./
-          mv ./customization/requirements.txt ./
-          mv ./customization/settings.dist.py ./dojo/settings/
+          mv ./base-repo/customization/Dockerfile.django ./
+          mv ./base-repo/customization/Dockerfile.nginx ./
+          mv ./base-repo/customization/requirements.txt ./
+          mv ./base-repo/customization/settings.dist.py ./dojo/settings/
 
       - name: Login to DockerHub
         uses: docker/login-action@v1 

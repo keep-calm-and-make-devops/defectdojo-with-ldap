@@ -222,6 +222,12 @@ env = environ.Env(
     DD_ASYNC_FINDING_IMPORT_CHUNK_SIZE=(int, 100),
     # Feature toggle for new authorization for configurations
     DD_FEATURE_CONFIGURATION_AUTHORIZATION=(bool, True),
+    
+    # Additional env for LDAP AUTH
+    AUTH_LDAP_SERVER_URI=(str, 'ldap://URL'),
+    AUTH_LDAP_BIND_DN=(str, 'ldap_user@ldap-domain.local'),
+    AUTH_LDAP_BIND_PASSWORD=(str, 'password'),
+    AUTH_LDAP_USER_SEARCH=(str, 'ou=Groups,dc=example,dc=com'),
 )
 
 

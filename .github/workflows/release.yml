@@ -27,7 +27,7 @@ jobs:
       - name: Checkout original DefectDojo repo
         uses: actions/checkout@v3
         with:
-          repository: 'https://github.com/DefectDojo/django-DefectDojo.git'
+          repository: 'DefectDojo/django-DefectDojo'
           ref: 'release/${{ env.VERSION }}'
 
       - name: Replace some files for defectdojo customization

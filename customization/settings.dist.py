@@ -6,7 +6,7 @@ from dojo import __version__
 import environ
 # For LDAP AUTH
 import ldap  
-from django_auth_ldap.config import LDAPSearch
+from django_auth_ldap.config import LDAPSearch, LDAPSearchUnion
 
 # See https://defectdojo.github.io/django-DefectDojo/getting_started/configuration/ for options
 # how to tune the configuration to your needs.
@@ -419,7 +419,7 @@ LOGIN_URL = env('DD_LOGIN_URL')
 AUTH_LDAP_SERVER_URI = env('AUTH_LDAP_SERVER_URI')
 AUTH_LDAP_BIND_DN = env('AUTH_LDAP_BIND_DN')
 AUTH_LDAP_BIND_PASSWORD = env('AUTH_LDAP_BIND_PASSWORD')
-AUTH_LDAP_USER_SEARCH = LDAPSearch(
+AUTH_LDAP_USER_SEARCH = LDAPSearchUnion(
     env('AUTH_LDAP_USER_SEARCH'), ldap.SCOPE_SUBTREE, "(uid=%(user)s)"
 )
 

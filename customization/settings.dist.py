@@ -6,7 +6,7 @@ from dojo import __version__
 import environ
 # For LDAP AUTH
 import ldap  
-from django_auth_ldap.config import LDAPSearch, LDAPSearchUnion, PosixGroupType
+from django_auth_ldap.config import LDAPSearch, LDAPSearchUnion, PosixGroupType, GroupOfNamesType
 
 # See https://defectdojo.github.io/django-DefectDojo/getting_started/configuration/ for options
 # how to tune the configuration to your needs.
@@ -229,6 +229,7 @@ env = environ.Env(
     AUTH_LDAP_BIND_PASSWORD=(str, 'password'),
     AUTH_LDAP_USER_SEARCH=(str, 'dc=example,dc=com'),
     AUTH_LDAP_GROUP_SEARCH=(str, 'ou=Groups,dc=example,dc=com'),
+    AUTH_LDAP_REQUIRE_GROUP=(str, 'cn=enabled,ou=groups,dc=example,dc=com')
 )
 
 
@@ -427,12 +428,15 @@ AUTH_LDAP_USER_SEARCH = LDAPSearch(
 )
 
 # Set up the basic group parameters.
-#AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
-#    env('AUTH_LDAP_USER_SEARCH'),
-#    ldap.SCOPE_SUBTREE, "(objectClass=posixGroup)"
-#)
+AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
+    env('AUTH_LDAP_USER_SEARCH'),
+    ldap.SCOPE_SUBTREE, "(objectClass=posixGroup)"
+)
 
-AUTH_LDAP_GROUP_TYPE = PosixGroupType()
+AUTH_LDAP_REQUIRE_GROUP = env('AUTH_LDAP_REQUIRE_GROUP')
+
+#AUTH_LDAP_GROUP_TYPE = PosixGroupType()
+AUTH_LDAP_GROUP_TYPE = GroupOfNamesType()
 
 AUTH_LDAP_USER_ATTR_MAP = {
     "first_name": "givenName",
@@ -444,6 +448,9 @@ AUTH_LDAP_USER_ATTR_MAP = {
 
 # These are the individidual modules supported by social-auth
 AUTHENTICATION_BACKENDS = (
+    # For LDAP AUTH
+    'django_auth_ldap.backend.LDAPBackend',
+    # Other
     'social_core.backends.auth0.Auth0OAuth2',
     'social_core.backends.google.GoogleOAuth2',
     'dojo.okta.OktaOAuth2',
@@ -454,8 +461,6 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.github_enterprise.GithubEnterpriseOAuth2',
     'django.contrib.auth.backends.RemoteUserBackend',
     'django.contrib.auth.backends.ModelBackend',
-    # For LDAP AUTH
-    'django_auth_ldap.backend.LDAPBackend',
 )
 
 # Make Argon2 the default password hasher by listing it first

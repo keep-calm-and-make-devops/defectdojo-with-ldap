@@ -6,7 +6,7 @@ from dojo import __version__
 import environ
 # For LDAP AUTH
 import ldap  
-from django_auth_ldap.config import LDAPSearch, LDAPSearchUnion
+from django_auth_ldap.config import LDAPSearch, LDAPSearchUnion, PosixGroupType
 
 # See https://defectdojo.github.io/django-DefectDojo/getting_started/configuration/ for options
 # how to tune the configuration to your needs.
@@ -227,7 +227,8 @@ env = environ.Env(
     AUTH_LDAP_SERVER_URI=(str, 'ldap://URL'),
     AUTH_LDAP_BIND_DN=(str, 'ldap_user@ldap-domain.local'),
     AUTH_LDAP_BIND_PASSWORD=(str, 'password'),
-    AUTH_LDAP_USER_SEARCH=(str, 'ou=Groups,dc=example,dc=com'),
+    AUTH_LDAP_USER_SEARCH=(str, 'dc=example,dc=com'),
+    AUTH_LDAP_GROUP_SEARCH=(str, 'ou=Groups,dc=example,dc=com'),
 )
 
 
@@ -419,13 +420,25 @@ LOGIN_URL = env('DD_LOGIN_URL')
 AUTH_LDAP_SERVER_URI = env('AUTH_LDAP_SERVER_URI')
 AUTH_LDAP_BIND_DN = env('AUTH_LDAP_BIND_DN')
 AUTH_LDAP_BIND_PASSWORD = env('AUTH_LDAP_BIND_PASSWORD')
+
 AUTH_LDAP_USER_SEARCH = LDAPSearch(
-    env('AUTH_LDAP_USER_SEARCH'), ldap.SCOPE_SUBTREE, "(uid=%(user)s)"
+    env('AUTH_LDAP_USER_SEARCH'), 
+    ldap.SCOPE_SUBTREE, "(cn=%s)"
 )
+
+# Set up the basic group parameters.
+#AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
+#    env('AUTH_LDAP_USER_SEARCH'),
+#    ldap.SCOPE_SUBTREE, "(objectClass=posixGroup)"
+#)
+
+AUTH_LDAP_GROUP_TYPE = PosixGroupType()
 
 AUTH_LDAP_USER_ATTR_MAP = {
     "first_name": "givenName",
     "last_name": "sn",
+    "username": "cn",
+    "member_of": "memberOf",
     "email": "mail",
 }
 

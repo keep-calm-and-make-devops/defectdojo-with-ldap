@@ -230,6 +230,10 @@ env = environ.Env(
     AUTH_LDAP_USER_SEARCH=(str, 'dc=example,dc=com'),
     AUTH_LDAP_GROUP_SEARCH=(str, 'ou=Groups,dc=example,dc=com'),
     AUTH_LDAP_REQUIRE_GROUP=(str, 'cn=enabled,ou=groups,dc=example,dc=com')
+    AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_ACTIVE=(str, 'cn=enabled,ou=groups,dc=example,dc=com')
+    AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_STAFF=(str, 'cn=enabled,ou=groups,dc=example,dc=com')
+    AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_SUPERUSER=(str, 'cn=enabled,ou=groups,dc=example,dc=com')
+
 )
 
 
@@ -419,6 +423,7 @@ LOGIN_URL = env('DD_LOGIN_URL')
 # LDAP AUTH
 
 AUTH_LDAP_SERVER_URI = env('AUTH_LDAP_SERVER_URI')
+
 AUTH_LDAP_BIND_DN = env('AUTH_LDAP_BIND_DN')
 AUTH_LDAP_BIND_PASSWORD = env('AUTH_LDAP_BIND_PASSWORD')
 
@@ -430,24 +435,33 @@ AUTH_LDAP_USER_SEARCH = LDAPSearch(
 # Set up the basic group parameters.
 AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
     env('AUTH_LDAP_GROUP_SEARCH'),
-    ldap.SCOPE_SUBTREE, "(objectClass=posixGroup)"
+    ldap.SCOPE_SUBTREE, "(objectClass=groupOfNames)"
 )
 
+AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
+
+# Simple group restrictions
 AUTH_LDAP_REQUIRE_GROUP = env('AUTH_LDAP_REQUIRE_GROUP')
+#AUTH_LDAP_DENY_GROUP = "cn=disabled,ou=django,ou=groups,dc=example,dc=com"
 
 AUTH_LDAP_GROUP_TYPE = PosixGroupType()
 #AUTH_LDAP_GROUP_TYPE = GroupOfNamesType()
 
+# Populate the Django user from the LDAP directory.
 AUTH_LDAP_USER_ATTR_MAP = {
     "first_name": "givenName",
     "last_name": "sn",
-    "username": "cn",
-    "member_of": "memberOf",
     "email": "mail",
 }
 
-# This should only be done once
-#AUTH_LDAP_ALWAYS_UPDATE_USER = False
+AUTH_LDAP_USER_FLAGS_BY_GROUP = {
+    "is_active": env('AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_ACTIVE'),
+    "is_staff": env('AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_STAFF'),
+    "is_superuser": env('AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_SUPERUSER'),
+}
+
+# This is the default, but I like to be explicit.
+AUTH_LDAP_ALWAYS_UPDATE_USER = True
 
 # Use LDAP group membership to calculate group permissions.
 AUTH_LDAP_FIND_GROUP_PERMS = True

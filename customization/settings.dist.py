@@ -444,9 +444,6 @@ AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
 AUTH_LDAP_REQUIRE_GROUP = env('AUTH_LDAP_REQUIRE_GROUP')
 #AUTH_LDAP_DENY_GROUP = "cn=disabled,ou=django,ou=groups,dc=example,dc=com"
 
-AUTH_LDAP_GROUP_TYPE = PosixGroupType()
-#AUTH_LDAP_GROUP_TYPE = GroupOfNamesType()
-
 # Populate the Django user from the LDAP directory.
 AUTH_LDAP_USER_ATTR_MAP = {
     "first_name": "givenName",

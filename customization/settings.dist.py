@@ -424,19 +424,19 @@ AUTH_LDAP_BIND_PASSWORD = env('AUTH_LDAP_BIND_PASSWORD')
 
 AUTH_LDAP_USER_SEARCH = LDAPSearch(
     env('AUTH_LDAP_USER_SEARCH'), 
-    ldap.SCOPE_SUBTREE, "(cn=%s)"
+    ldap.SCOPE_SUBTREE, "(uid=%(user)s)"
 )
 
 # Set up the basic group parameters.
 AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
-    env('AUTH_LDAP_USER_SEARCH'),
+    env('AUTH_LDAP_GROUP_SEARCH'),
     ldap.SCOPE_SUBTREE, "(objectClass=posixGroup)"
 )
 
 AUTH_LDAP_REQUIRE_GROUP = env('AUTH_LDAP_REQUIRE_GROUP')
 
-#AUTH_LDAP_GROUP_TYPE = PosixGroupType()
-AUTH_LDAP_GROUP_TYPE = GroupOfNamesType()
+AUTH_LDAP_GROUP_TYPE = PosixGroupType()
+#AUTH_LDAP_GROUP_TYPE = GroupOfNamesType()
 
 AUTH_LDAP_USER_ATTR_MAP = {
     "first_name": "givenName",
@@ -445,6 +445,16 @@ AUTH_LDAP_USER_ATTR_MAP = {
     "member_of": "memberOf",
     "email": "mail",
 }
+
+# This should only be done once
+#AUTH_LDAP_ALWAYS_UPDATE_USER = False
+
+# Use LDAP group membership to calculate group permissions.
+AUTH_LDAP_FIND_GROUP_PERMS = True
+
+# Cache group memberships for an hour to minimize LDAP traffic
+AUTH_LDAP_CACHE_GROUPS = True
+AUTH_LDAP_GROUP_CACHE_TIMEOUT = 3600
 
 # These are the individidual modules supported by social-auth
 AUTHENTICATION_BACKENDS = (

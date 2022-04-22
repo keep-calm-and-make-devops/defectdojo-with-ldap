@@ -229,10 +229,10 @@ env = environ.Env(
     AUTH_LDAP_BIND_PASSWORD=(str, 'password'),
     AUTH_LDAP_USER_SEARCH=(str, 'dc=example,dc=com'),
     AUTH_LDAP_GROUP_SEARCH=(str, 'ou=Groups,dc=example,dc=com'),
-    AUTH_LDAP_REQUIRE_GROUP=(str, 'cn=enabled,ou=groups,dc=example,dc=com')
-    AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_ACTIVE=(str, 'cn=enabled,ou=groups,dc=example,dc=com')
-    AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_STAFF=(str, 'cn=enabled,ou=groups,dc=example,dc=com')
-    AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_SUPERUSER=(str, 'cn=enabled,ou=groups,dc=example,dc=com')
+    AUTH_LDAP_REQUIRE_GROUP=(str, 'cn=enabled,ou=groups,dc=example,dc=com'),
+    AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_ACTIVE=(str, 'cn=enabled,ou=groups,dc=example,dc=com'),
+    AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_STAFF=(str, 'cn=enabled,ou=groups,dc=example,dc=com'),
+    AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_SUPERUSER=(str, 'cn=enabled,ou=groups,dc=example,dc=com'),
 
 )
 

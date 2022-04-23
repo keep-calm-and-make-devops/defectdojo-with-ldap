@@ -419,54 +419,6 @@ URL_PREFIX = env('DD_URL_PREFIX')
 LOGIN_REDIRECT_URL = env('DD_LOGIN_REDIRECT_URL')
 LOGIN_URL = env('DD_LOGIN_URL')
 
-
-# LDAP AUTH
-
-AUTH_LDAP_SERVER_URI = env('AUTH_LDAP_SERVER_URI')
-
-AUTH_LDAP_BIND_DN = env('AUTH_LDAP_BIND_DN')
-AUTH_LDAP_BIND_PASSWORD = env('AUTH_LDAP_BIND_PASSWORD')
-
-AUTH_LDAP_USER_SEARCH = LDAPSearch(
-    env('AUTH_LDAP_USER_SEARCH'), 
-    ldap.SCOPE_SUBTREE, "(uid=%(user)s)"
-)
-
-# Set up the basic group parameters.
-AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
-    env('AUTH_LDAP_GROUP_SEARCH'),
-    ldap.SCOPE_SUBTREE, "(objectClass=groupOfNames)"
-)
-
-AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
-
-# Simple group restrictions
-AUTH_LDAP_REQUIRE_GROUP = env('AUTH_LDAP_REQUIRE_GROUP')
-#AUTH_LDAP_DENY_GROUP = "cn=disabled,ou=django,ou=groups,dc=example,dc=com"
-
-# Populate the Django user from the LDAP directory.
-AUTH_LDAP_USER_ATTR_MAP = {
-    "first_name": "givenName",
-    "last_name": "sn",
-    "email": "mail",
-}
-
-AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-    "is_active": env('AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_ACTIVE'),
-    "is_staff": env('AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_STAFF'),
-    "is_superuser": env('AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_SUPERUSER'),
-}
-
-# This is the default, but I like to be explicit.
-AUTH_LDAP_ALWAYS_UPDATE_USER = True
-
-# Use LDAP group membership to calculate group permissions.
-AUTH_LDAP_FIND_GROUP_PERMS = True
-
-# Cache group memberships for an hour to minimize LDAP traffic
-AUTH_LDAP_CACHE_GROUPS = True
-AUTH_LDAP_GROUP_CACHE_TIMEOUT = 3600
-
 # These are the individidual modules supported by social-auth
 AUTHENTICATION_BACKENDS = (
     # For LDAP AUTH
@@ -583,6 +535,49 @@ SOCIAL_AUTH_GITHUB_ENTERPRISE_KEY = env('DD_SOCIAL_AUTH_GITHUB_ENTERPRISE_KEY')
 SOCIAL_AUTH_GITHUB_ENTERPRISE_SECRET = env('DD_SOCIAL_AUTH_GITHUB_ENTERPRISE_SECRET')
 
 DOCUMENTATION_URL = env('DD_DOCUMENTATION_URL')
+
+
+# LDAP AUTH
+AUTH_LDAP_SERVER_URI = env('AUTH_LDAP_SERVER_URI')
+AUTH_LDAP_BIND_DN = env('AUTH_LDAP_BIND_DN')
+AUTH_LDAP_BIND_PASSWORD = env('AUTH_LDAP_BIND_PASSWORD')
+
+AUTH_LDAP_USER_SEARCH = LDAPSearch(
+    env('AUTH_LDAP_USER_SEARCH'), 
+    ldap.SCOPE_SUBTREE, "(uid=%(user)s)"
+)
+
+# Set up the basic group parameters.
+AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
+    env('AUTH_LDAP_GROUP_SEARCH'),
+    ldap.SCOPE_SUBTREE, "(objectClass=groupOfNames)"
+)
+
+AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
+# Simple group restrictions
+AUTH_LDAP_REQUIRE_GROUP = env('AUTH_LDAP_REQUIRE_GROUP')
+#AUTH_LDAP_DENY_GROUP = "cn=disabled,ou=django,ou=groups,dc=example,dc=com"
+
+# Populate the Django user from the LDAP directory.
+AUTH_LDAP_USER_ATTR_MAP = {
+    "first_name": "givenName",
+    "last_name": "sn",
+    "email": "mail",
+}
+
+AUTH_LDAP_USER_FLAGS_BY_GROUP = {
+    "is_active": env('AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_ACTIVE'),
+    "is_staff": env('AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_STAFF'),
+    "is_superuser": env('AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_SUPERUSER'),
+}
+
+# This is the default, but I like to be explicit.
+AUTH_LDAP_ALWAYS_UPDATE_USER = True
+# Use LDAP group membership to calculate group permissions.
+AUTH_LDAP_FIND_GROUP_PERMS = True
+# Cache group memberships for an hour to minimize LDAP traffic
+AUTH_LDAP_CACHE_GROUPS = True
+AUTH_LDAP_GROUP_CACHE_TIMEOUT = 3600
 
 # Setting SLA_NOTIFY_ACTIVE and SLA_NOTIFY_ACTIVE_VERIFIED to False will disable the feature
 # If you import thousands of Active findings through your pipeline everyday,

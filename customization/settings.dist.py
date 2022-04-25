@@ -6,7 +6,7 @@ from dojo import __version__
 import environ
 # For LDAP AUTH
 import ldap  
-from django_auth_ldap.config import LDAPSearch, LDAPSearchUnion, PosixGroupType, GroupOfNamesType
+from django_auth_ldap.config import LDAPSearch, LDAPSearchUnion, PosixGroupType, GroupOfNamesType, ActiveDirectoryGroupType
 
 # See https://defectdojo.github.io/django-DefectDojo/getting_started/configuration/ for options
 # how to tune the configuration to your needs.
@@ -537,7 +537,10 @@ SOCIAL_AUTH_GITHUB_ENTERPRISE_SECRET = env('DD_SOCIAL_AUTH_GITHUB_ENTERPRISE_SEC
 DOCUMENTATION_URL = env('DD_DOCUMENTATION_URL')
 
 
-# LDAP AUTH
+#
+# LDAP - START
+#
+ 
 AUTH_LDAP_SERVER_URI = env('AUTH_LDAP_SERVER_URI')
 AUTH_LDAP_BIND_DN = env('AUTH_LDAP_BIND_DN')
 AUTH_LDAP_BIND_PASSWORD = env('AUTH_LDAP_BIND_PASSWORD')
@@ -555,10 +558,11 @@ AUTH_LDAP_USER_SEARCH = LDAPSearch(
 # Set up the basic group parameters.
 AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
     env('AUTH_LDAP_GROUP_SEARCH'),
-    ldap.SCOPE_SUBTREE, "(objectClass=groupOfNames)"
+    ldap.SCOPE_SUBTREE, "(objectCategory=Group)"
 )
 
-AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
+AUTH_LDAP_GROUP_TYPE = ActiveDirectoryGroupType(name_attr="cn")
+
 # Simple group restrictions
 AUTH_LDAP_REQUIRE_GROUP = env('AUTH_LDAP_REQUIRE_GROUP')
 #AUTH_LDAP_DENY_GROUP = "cn=disabled,ou=django,ou=groups,dc=example,dc=com"
@@ -585,6 +589,12 @@ AUTH_LDAP_FIND_GROUP_PERMS = True
 AUTH_LDAP_CACHE_GROUPS = True
 AUTH_LDAP_GROUP_CACHE_TIMEOUT = 3600
 
+
+#
+# LDAP - END
+#
+
+
 # Setting SLA_NOTIFY_ACTIVE and SLA_NOTIFY_ACTIVE_VERIFIED to False will disable the feature
 # If you import thousands of Active findings through your pipeline everyday,
 # and make the choice of enabling SLA notifications for non-verified findings,
@@ -595,7 +605,6 @@ SLA_NOTIFY_WITH_JIRA_ONLY = env('DD_SLA_NOTIFY_WITH_JIRA_ONLY')  # Based on the 
 SLA_NOTIFY_PRE_BREACH = env('DD_SLA_NOTIFY_PRE_BREACH')  # in days, notify between dayofbreach minus this number until dayofbreach
 SLA_NOTIFY_POST_BREACH = env('DD_SLA_NOTIFY_POST_BREACH')  # in days, skip notifications for findings that go past dayofbreach plus this number
 SLA_BUSINESS_DAYS = env('DD_SLA_BUSINESS_DAYS')  # Use business days to calculate SLA's and age of a finding instead of calendar days
-
 
 SEARCH_MAX_RESULTS = env('DD_SEARCH_MAX_RESULTS')
 SIMILAR_FINDINGS_MAX_RESULTS = env('DD_SIMILAR_FINDINGS_MAX_RESULTS')

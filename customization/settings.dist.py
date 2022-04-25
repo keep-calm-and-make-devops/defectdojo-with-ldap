@@ -552,14 +552,6 @@ AUTH_LDAP_USER_SEARCH = LDAPSearch(
     ldap.SCOPE_SUBTREE, "(sAMAccountName=%(user)s)"
 )
 
-# Populate the Django user from the LDAP directory.
-AUTH_LDAP_USER_ATTR_MAP = {
-    "username": "sAMAccountName",
-    "first_name": "givenName",
-    "last_name": "sn",
-    "email": "mail",
-}
-
 # Set up the basic group parameters.
 AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
     env('AUTH_LDAP_GROUP_SEARCH'),
@@ -570,6 +562,14 @@ AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
 # Simple group restrictions
 AUTH_LDAP_REQUIRE_GROUP = env('AUTH_LDAP_REQUIRE_GROUP')
 #AUTH_LDAP_DENY_GROUP = "cn=disabled,ou=django,ou=groups,dc=example,dc=com"
+
+# Populate the Django user from the LDAP directory.
+AUTH_LDAP_USER_ATTR_MAP = {
+    "username": "sAMAccountName",
+    "first_name": "givenName",
+    "last_name": "sn",
+    "email": "mail",
+}
 
 AUTH_LDAP_USER_FLAGS_BY_GROUP = {
     "is_active": env('AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_ACTIVE'),

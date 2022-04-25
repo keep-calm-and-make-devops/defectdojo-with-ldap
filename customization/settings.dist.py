@@ -1369,6 +1369,10 @@ LOGGING = {
         },
     },
     'loggers': {
+        'django_auth_ldap' : {
+            'handlers': ['console'],
+            'level': '%s' % LOG_LEVEL,
+        },
         'django.request': {
             'handlers': ['mail_admins', 'console'],
             'level': 'WARN',

@@ -549,7 +549,7 @@ AUTH_LDAP_CONNECTION_OPTIONS = {
 
 AUTH_LDAP_USER_SEARCH = LDAPSearch(
     env('AUTH_LDAP_USER_SEARCH'), 
-    ldap.SCOPE_SUBTREE, "(uid=%(user)s)"
+    ldap.SCOPE_SUBTREE, "(sAMAccountName=%(user)s)"
 )
 
 # Set up the basic group parameters.
@@ -565,6 +565,7 @@ AUTH_LDAP_REQUIRE_GROUP = env('AUTH_LDAP_REQUIRE_GROUP')
 
 # Populate the Django user from the LDAP directory.
 AUTH_LDAP_USER_ATTR_MAP = {
+    "username": "sAMAccountName",
     "first_name": "givenName",
     "last_name": "sn",
     "email": "mail",

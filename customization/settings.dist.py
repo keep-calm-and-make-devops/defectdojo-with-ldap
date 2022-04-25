@@ -4,9 +4,9 @@ from datetime import timedelta
 from celery.schedules import crontab
 from dojo import __version__
 import environ
-# For LDAP AUTH
+# For django-auth-ldap
 import ldap  
-from django_auth_ldap.config import LDAPSearch, LDAPSearchUnion, PosixGroupType, GroupOfNamesType
+from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
 
 # See https://defectdojo.github.io/django-DefectDojo/getting_started/configuration/ for options
 # how to tune the configuration to your needs.
@@ -223,7 +223,7 @@ env = environ.Env(
     # Feature toggle for new authorization for configurations
     DD_FEATURE_CONFIGURATION_AUTHORIZATION=(bool, True),
     
-    # Additional env for LDAP AUTH
+    # Additional env for django-auth-ldap
     AUTH_LDAP_SERVER_URI=(str, 'ldap://URL'),
     AUTH_LDAP_BIND_DN=(str, 'ldap_user@ldap-domain.local'),
     AUTH_LDAP_BIND_PASSWORD=(str, 'password'),
@@ -536,8 +536,7 @@ SOCIAL_AUTH_GITHUB_ENTERPRISE_SECRET = env('DD_SOCIAL_AUTH_GITHUB_ENTERPRISE_SEC
 
 DOCUMENTATION_URL = env('DD_DOCUMENTATION_URL')
 
-
-# LDAP AUTH
+############################## django-auth-ldap ##############################
 AUTH_LDAP_SERVER_URI = env('AUTH_LDAP_SERVER_URI')
 AUTH_LDAP_BIND_DN = env('AUTH_LDAP_BIND_DN')
 AUTH_LDAP_BIND_PASSWORD = env('AUTH_LDAP_BIND_PASSWORD')
@@ -552,17 +551,6 @@ AUTH_LDAP_USER_SEARCH = LDAPSearch(
     ldap.SCOPE_SUBTREE, "(sAMAccountName=%(user)s)"
 )
 
-# Set up the basic group parameters.
-AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
-    env('AUTH_LDAP_GROUP_SEARCH'),
-    ldap.SCOPE_SUBTREE, "(objectClass=groupOfNames)"
-)
-
-AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
-# Simple group restrictions
-AUTH_LDAP_REQUIRE_GROUP = env('AUTH_LDAP_REQUIRE_GROUP')
-#AUTH_LDAP_DENY_GROUP = "cn=disabled,ou=django,ou=groups,dc=example,dc=com"
-
 # Populate the Django user from the LDAP directory.
 AUTH_LDAP_USER_ATTR_MAP = {
     "username": "sAMAccountName",
@@ -570,6 +558,18 @@ AUTH_LDAP_USER_ATTR_MAP = {
     "last_name": "sn",
     "email": "mail",
 }
+
+# Set up the basic group parameters.
+AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
+    env('AUTH_LDAP_GROUP_SEARCH'),
+    ldap.SCOPE_SUBTREE, "(objectClass=groupOfNames)"
+)
+
+AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
+
+# Simple group restrictions
+AUTH_LDAP_REQUIRE_GROUP = env('AUTH_LDAP_REQUIRE_GROUP')
+#AUTH_LDAP_DENY_GROUP = "cn=disabled,ou=django,ou=groups,dc=example,dc=com"
 
 AUTH_LDAP_USER_FLAGS_BY_GROUP = {
     "is_active": env('AUTH_LDAP_USER_FLAGS_BY_GROUP_IS_ACTIVE'),
@@ -579,11 +579,16 @@ AUTH_LDAP_USER_FLAGS_BY_GROUP = {
 
 # This is the default, but I like to be explicit.
 AUTH_LDAP_ALWAYS_UPDATE_USER = True
+
 # Use LDAP group membership to calculate group permissions.
 AUTH_LDAP_FIND_GROUP_PERMS = True
+
 # Cache group memberships for an hour to minimize LDAP traffic
 AUTH_LDAP_CACHE_GROUPS = True
 AUTH_LDAP_GROUP_CACHE_TIMEOUT = 3600
+
+######################### end of django-auth-ldap ############################
+
 
 # Setting SLA_NOTIFY_ACTIVE and SLA_NOTIFY_ACTIVE_VERIFIED to False will disable the feature
 # If you import thousands of Active findings through your pipeline everyday,
@@ -1370,10 +1375,12 @@ LOGGING = {
         },
     },
     'loggers': {
+        # for django-auth-ldap
         'django_auth_ldap' : {
             'handlers': ['console'],
             'level': '%s' % LOG_LEVEL,
         },
+        # end
         'django.request': {
             'handlers': ['mail_admins', 'console'],
             'level': 'WARN',
